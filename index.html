@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>complate playground</title>
+</head>
+
+<body>
+	<textarea id="input">&lt;p&gt;
+	hello
+	&lt;i&gt;world&lt;/i&gt;
+&lt;/p&gt;</textarea>
+	<pre id="markup"></pre>
+	<div id="output"></div>
+
+	<script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+	<script src="dist/complate.js"></script>
+	<script>
+document.getElementById("input").addEventListener("change", function(ev) {
+	let jsx = Babel.transform(this.value, {
+		presets: ["es2015"],
+		plugins: [
+			["transform-react-jsx", { "pragma": "complate" }]
+		]
+	}).code;
+
+	let code = `(function() {
+		${jsx}
+		let html = complate.stream.read();
+
+		document.getElementById("markup").textContent = html;
+		document.getElementById("output").innerHTML = html;
+	}());`
+
+	let node = document.createElement("script");
+	node.textContent = code;
+	document.head.appendChild(node);
+	document.head.removeChild(node);
+});
+	</script>
+</body>
+
+</html>
